@@ -1,12 +1,13 @@
-<!DOCTYPE html><html lang='en'>
+<!DOCTYPE html>
+<html lang='en'>
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>⚔️ Shreyas Epic Quest Deluxe</title>
+<title>👑 Shreyas Neon Maze Legends</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#000;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px}#app{width:min(96vw,1040px)}h1{text-align:center;font-size:clamp(2rem,4vw,3.3rem);margin:8px 0 14px}.glow{color:#67e8f9;text-shadow:0 0 18px #67e8f9}.topicon{width:58px;height:58px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:10px;border:2px solid #67e8f9;box-shadow:0 0 14px #67e8f9}.hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.card{background:rgba(255,255,255,.06);padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.08)}button{width:100%;padding:12px;border:none;border-radius:14px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(135deg,#06b6d4,#2563eb)}canvas{display:block;margin:auto;width:min(92vw,780px);height:min(92vw,780px);max-width:780px;max-height:780px;background:#000;border-radius:28px;border:3px solid #67e8f9;box-shadow:0 0 40px rgba(34,211,238,.35);touch-action:none}#msg{text-align:center;margin-top:12px;min-height:30px;font-weight:800;color:#fde047}.tip{text-align:center;color:#cbd5e1;font-size:.92rem;margin-top:6px}
 </style></head><body><div id='app'>
-<h1><img class='topicon' src='USER_PHOTO_HERE'>⚔️ <span class='glow'>Shreyas Epic Quest Deluxe</span></h1>
+<h1><img class='topicon' src='https://kommodo.ai/i/d4EGHWWM9mEcF8kdfbn3'>⚔️ <span class='glow'>Shreyas Neon Maze Legends</span></h1>
 <div class='hud'>
 <div class='card'>⭐ Score: <span id='score'>0</span></div>
 <div class='card'>🏆 Level: <span id='level'>1</span></div>
@@ -29,7 +30,7 @@ function start(){cols=rows=Math.min(11+level,22);makeMaze();player={i:0,j:0};goa
 function hud(){scoreEl.textContent=score;levelEl.textContent=level;timeEl.textContent=time}function show(t){msg.textContent=t}
 function draw(){size=c.width/cols;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);ctx.font='30px serif';for(let k=15;k<c.width;k+=70){ctx.fillText('🌸',k,28);ctx.fillText('🌺',k,c.height-8)}for(let k=55;k<c.height;k+=75){ctx.fillText('🌼',6,k);ctx.fillText('🌷',c.width-34,k)}for(let cell of grid){let x=cell.i*size,y=cell.j*size;ctx.strokeStyle=['#67e8f9','#f472b6','#a78bfa','#22c55e'][(cell.i+cell.j)%4];ctx.shadowBlur=10;ctx.shadowColor=ctx.strokeStyle;ctx.lineWidth=Math.max(2,size*.05);if(cell.w[0])ln(x,y,x+size,y);if(cell.w[1])ln(x+size,y,x+size,y+size);if(cell.w[2])ln(x,y+size,x+size,y+size);if(cell.w[3])ln(x,y,x,y+size)}ctx.shadowBlur=0;ctx.font=(size*.5)+'px serif';ctx.fillText('🌀',goal.i*size+size*.25,goal.j*size+size*.7);ctx.fillText('🤖',player.i*size+size*.25,player.j*size+size*.7)}
 function ln(a,b,d,e){ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(d,e);ctx.stroke()}
-function move(dir){let cur=grid[id(player.i,player.j)];if(cur.w[dir]){show('🚧 Choose another route!');return}let oldI=pathIndex(player.i,player.j);if(dir===0)player.j--;if(dir===1)player.i++;if(dir===2)player.j++;if(dir===3)player.i--;let newI=pathIndex(player.i,player.j);if(newI>oldI){score+=8;show('✅ Correct direction!')}else{score=Math.max(0,score-5);show('❌ Wrong / Backtracking!')}if(player.i===goal.i&&player.j===goal.j){score+=150;clearInterval(timer);show('🎉 Victory! Next Level Unlocked!');level++;hud();draw();setTimeout(start,1300);return}hud();draw();}
+function move(dir){let cur=grid[id(player.i,player.j)];if(cur.w[dir]){show('🚧 Choose another route!');return}let oldI=pathIndex(player.i,player.j),oi=player.i,oj=player.j;if(dir===0)player.j--;if(dir===1)player.i++;if(dir===2)player.j++;if(dir===3)player.i--;let newI=pathIndex(player.i,player.j);if(newI===-1){score=Math.max(0,score-6);show('❌ Wrong turn!')}else if(newI>oldI){score+=8;show('✅ Correct direction!')}else if(newI<oldI){score=Math.max(0,score-5);show('↩️ Backtracking!')}else{player.i=oi;player.j=oj;show('⚠️ No gain here!')}if(player.i===goal.i&&player.j===goal.j){score+=150;clearInterval(timer);show('🎉 Legendary Victory! Next Level Unlocked!');level++;hud();draw();setTimeout(start,1300);return}hud();draw();}
 function hint(){score=Math.max(0,score-10);show('✨ Follow the shortest glowing route!')}
 function restartGame(){level=1;score=0;start()}
 addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='arrowup'||k==='w')move(0);if(k==='arrowright'||k==='d')move(1);if(k==='arrowdown'||k==='s')move(2);if(k==='arrowleft'||k==='a')move(3)});let sx=0,sy=0;c.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});c.addEventListener('touchmove',e=>{e.preventDefault();let nx=e.touches[0].clientX,ny=e.touches[0].clientY,dx=nx-sx,dy=ny-sy;if(Math.hypot(dx,dy)>22){if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:3);else move(dy>0?2:0);sx=nx;sy=ny;}},{passive:false});start();
