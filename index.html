@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang='en'>
+<!DOCTYPE html><html lang='en'>
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
@@ -11,7 +10,7 @@
 <div class='hud'>
 <div class='card'>⭐ Score: <span id='score'>0</span></div>
 <div class='card'>🏆 Level: <span id='level'>1</span></div>
-<div class='card'>⏱️ Time: <span id='time'>60</span>s</div>
+<div class='card'>⏱️ Time: <span id='time'>120</span>s</div>
 <div class='card'><button onclick='restartGame()'>Restart</button></div>
 <div class='card'><button onclick='hint()'>Hint ✨</button></div>
 </div>
@@ -26,7 +25,7 @@ function Cell(i,j){this.i=i;this.j=j;this.w=[1,1,1,1];this.v=false}const id=(i,j
 function makeMaze(){grid=[];stack=[];for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)grid.push(new Cell(i,j));let cur=grid[0];cur.v=true;while(true){let n=[];[[cur.i,cur.j-1,0],[cur.i+1,cur.j,1],[cur.i,cur.j+1,2],[cur.i-1,cur.j,3]].forEach(a=>{let ni=a[0],nj=a[1];if(ni>=0&&nj>=0&&ni<cols&&nj<rows&&!grid[id(ni,nj)].v)n.push([grid[id(ni,nj)],a[2]])});if(n.length){let p=n[Math.floor(Math.random()*n.length)],nx=p[0],d=p[1];stack.push(cur);cur.w[d]=0;nx.w[(d+2)%4]=0;nx.v=true;cur=nx}else if(stack.length)cur=stack.pop();else break;}}
 function solve(){let q=[[0,0]],seen={[id(0,0)]:1},prev={};while(q.length){let [i,j]=q.shift();if(i===goal.i&&j===goal.j)break;let cell=grid[id(i,j)],dirs=[[0,-1,0],[1,0,1],[0,1,2],[-1,0,3]];for(let d of dirs){let ni=i+d[0],nj=j+d[1],dr=d[2];if(!cell.w[dr]&&ni>=0&&nj>=0&&ni<cols&&nj<rows&&!seen[id(ni,nj)]){seen[id(ni,nj)]=1;prev[id(ni,nj)]=[i,j];q.push([ni,nj]);}}}let cur=[goal.i,goal.j],r=[];while(cur){r.push(cur);cur=prev[id(cur[0],cur[1])]}path=r.reverse();}
 function pathIndex(i,j){return path.findIndex(p=>p[0]===i&&p[1]===j)}
-function start(){cols=rows=(level===1?13:Math.min(16+level,24));makeMaze();player={i:0,j:0};goal={i:cols-1,j:rows-1};time=60;solve();clearInterval(timer);timer=setInterval(()=>{time--;hud();if(time<=0){clearInterval(timer);show('⏰ Time Up! Restarting from Level 1...');level=1;score=0;setTimeout(start,1200)}},1000);show('🚀 Quest Started!');hud();draw();}
+function start(){cols=rows=(level===1?13:Math.min(16+level,24));makeMaze();player={i:0,j:0};goal={i:cols-1,j:rows-1};time=120;solve();clearInterval(timer);timer=setInterval(()=>{time--;hud();if(time<=0){clearInterval(timer);show('⏰ Time Up! Restarting from Level 1...');level=1;score=0;setTimeout(start,1200)}},1000);show('🚀 Quest Started!');hud();draw();}
 function hud(){scoreEl.textContent=score;levelEl.textContent=level;timeEl.textContent=time}function show(t){msg.textContent=t}
 function draw(){size=c.width/cols;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);let bg=ctx.createRadialGradient(c.width/2,c.height/2,40,c.width/2,c.height/2,c.width/1.2);bg.addColorStop(0,'rgba(103,232,249,.08)');bg.addColorStop(.5,'rgba(168,85,247,.06)');bg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);for(let s=0;s<24;s++){let px=(s*97)%c.width,py=(s*53)%c.height;ctx.fillStyle='rgba(255,255,255,.18)';ctx.beginPath();ctx.arc(px,py,1.6,0,Math.PI*2);ctx.fill();}for(let cell of grid){let x=cell.i*size,y=cell.j*size;ctx.strokeStyle=['#67e8f9','#f472b6','#a78bfa','#22c55e','#f59e0b'][(cell.i+cell.j)%5];ctx.shadowBlur=16;ctx.shadowColor=ctx.strokeStyle;ctx.lineWidth=Math.max(2,size*.05);if(cell.w[0])ln(x,y,x+size,y);if(cell.w[1])ln(x+size,y,x+size,y+size);if(cell.w[2])ln(x,y+size,x+size,y+size);if(cell.w[3])ln(x,y,x,y+size)}ctx.shadowBlur=0;ctx.font=(size*.5)+'px serif';ctx.fillText('🏰',goal.i*size+size*.22,goal.j*size+size*.7);let px=player.i*size+size/2,py=player.j*size+size/2;ctx.beginPath();ctx.fillStyle='#06b6d4';ctx.shadowBlur=22;ctx.shadowColor='#06b6d4';ctx.arc(px,py,size*.25,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.beginPath();ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.arc(px,py,size*.32,0,Math.PI*2);ctx.stroke();ctx.font=(size*.24)+'px serif';ctx.fillStyle='#fff';ctx.fillText('🛡️',px-size*.10,py+size*.08);ctx.font=(size*.18)+'px serif';ctx.fillText('👑',px-size*.07,py-size*.12)}
 function ln(a,b,d,e){ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(d,e);ctx.stroke()}
