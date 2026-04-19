@@ -1,47 +1,36 @@
 <!DOCTYPE html><html lang='en'>
 <head>
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'>
 <title>Shreyas Epic Quest Deluxe</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#020617,#0f172a,#111827);color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px}#app{width:min(96vw,980px)}h1{text-align:center;margin:8px 0 14px;font-size:clamp(2rem,4vw,3.3rem);letter-spacing:.5px}.glow{color:#67e8f9;text-shadow:0 0 12px rgba(103,232,249,.55)}#hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);padding:12px;border-radius:20px;box-shadow:0 10px 24px rgba(0,0,0,.28)}button{width:100%;padding:12px;border:none;border-radius:16px;font-weight:800;background:linear-gradient(135deg,#22c55e,#14b8a6);color:#fff}canvas{display:block;margin:auto;width:min(92vw,760px);height:min(92vw,760px);max-width:760px;max-height:760px;border-radius:26px;border:3px solid rgba(103,232,249,.65);background:#020617;box-shadow:0 0 35px rgba(34,211,238,.28);touch-action:none}#msg{text-align:center;margin-top:12px;font-weight:800;color:#fde047;min-height:30px}.tip{text-align:center;color:#cbd5e1;font-size:.92rem;margin-top:6px}
-</style>
-</head>
-<body>
-<div id='app'>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#000;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px;overflow:hidden}body:before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(236,72,153,.15),transparent 25%),radial-gradient(circle at 80% 25%,rgba(34,211,238,.15),transparent 25%),radial-gradient(circle at 50% 80%,rgba(168,85,247,.15),transparent 30%);pointer-events:none}#app{width:min(96vw,1040px)}h1{text-align:center;font-size:clamp(2rem,4vw,3.5rem);margin:8px 0 14px}.glow{color:#67e8f9;text-shadow:0 0 18px rgba(103,232,249,.7)}#hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:12px;border-radius:22px;backdrop-filter:blur(10px)}button{width:100%;padding:12px;border:none;border-radius:16px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(135deg,#06b6d4,#2563eb)}#btn2{background:linear-gradient(135deg,#22c55e,#16a34a)}canvas{display:block;margin:auto;width:min(92vw,780px);height:min(92vw,780px);max-width:780px;max-height:780px;border-radius:28px;border:3px solid #67e8f9;background:#000;box-shadow:0 0 45px rgba(34,211,238,.35);touch-action:none}#msg{text-align:center;margin-top:12px;min-height:30px;font-weight:800;color:#fde047}.tip{text-align:center;color:#cbd5e1;font-size:.92rem;margin-top:6px}.bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:6px}.fill{height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444)}
+</style></head><body><div id='app'>
 <h1>⚔️ <span class='glow'>Shreyas Epic Quest Deluxe</span></h1>
 <div id='hud'>
 <div class='card'>⭐ Score: <span id='score'>0</span></div>
 <div class='card'>🏆 Level: <span id='level'>1</span></div>
-<div class='card'>⏱️ Time: <span id='time'>60</span>s</div>
-<div class='card'><button onclick='restartGame()'>Restart Quest</button></div>
+<div class='card'>⏱️ Time: <span id='time'>60</span>s<div class='bar'><div id='fill' class='fill'></div></div></div>
+<div class='card'><button onclick='restartGame()'>Restart</button></div>
+<div class='card'><button id='btn2' onclick='hint()'>Hint ✨</button></div>
 </div>
-<canvas id='game' width='760' height='760'></canvas>
-<div id='msg'>Find the glowing portal and escape the maze!</div>
-<div class='tip'>Laptop: Arrow Keys / WASD • Phone & Tablet: Swipe firmly in any direction</div>
+<canvas id='game' width='780' height='780'></canvas>
+<div id='msg'>Explore the neon maze and reach the portal!</div>
+<div class='tip'>Arrow Keys / WASD • Swipe on mobile • Correct moves gain score</div>
 </div>
 <script>
-const c=document.getElementById('game'),x=c.getContext('2d');
-const scoreEl=document.getElementById('score'),levelEl=document.getElementById('level'),timeEl=document.getElementById('time'),msg=document.getElementById('msg');
-let cols=10,rows=10,size,grid=[],stack=[],player,goal,level=1,score=0,time=60,timer,trail=[];
-function Cell(i,j){this.i=i;this.j=j;this.w=[1,1,1,1];this.v=false}
-const id=(i,j)=>i+j*cols;
-function maze(){grid=[];stack=[];for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)grid.push(new Cell(i,j));let cur=grid[0];cur.v=true;while(true){let n=[];let {i,j}=cur;[[i,j-1,0],[i+1,j,1],[i,j+1,2],[i-1,j,3]].forEach(a=>{let ni=a[0],nj=a[1];if(ni>=0&&nj>=0&&ni<cols&&nj<rows&&!grid[id(ni,nj)].v)n.push([grid[id(ni,nj)],a[2]])});if(n.length){let p=n[Math.floor(Math.random()*n.length)],nx=p[0],d=p[1];stack.push(cur);cur.w[d]=0;nx.w[(d+2)%4]=0;nx.v=true;cur=nx}else if(stack.length)cur=stack.pop();else break;}}
-function start(){cols=rows=Math.min(8+level,22);maze();player={i:0,j:0};goal={i:cols-1,j:rows-1};trail=[];time=Math.max(18,65-level*2);clearInterval(timer);timer=setInterval(()=>{time--;hud();if(time<=0){show('⏰ Time Over! Try again...');setTimeout(start,800)}},1000);show('✨ Level '+level+' begins!');hud();draw();}
-function hud(){scoreEl.textContent=score;levelEl.textContent=level;timeEl.textContent=time}
-function show(t){msg.textContent=t}
-function draw(){size=c.width/cols;x.clearRect(0,0,c.width,c.height);let bg=x.createLinearGradient(0,0,c.width,c.height);bg.addColorStop(0,'#020617');bg.addColorStop(1,'#0f172a');x.fillStyle=bg;x.fillRect(0,0,c.width,c.height);
-trail.forEach(p=>{x.fillStyle='rgba(34,197,94,.08)';x.fillRect(p.i*size+size*.2,p.j*size+size*.2,size*.6,size*.6)});
-for(let cell of grid){let px=cell.i*size,py=cell.j*size;x.strokeStyle='rgba(103,232,249,.9)';x.lineWidth=Math.max(2,size*.05);if(cell.w[0])ln(px,py,px+size,py);if(cell.w[1])ln(px+size,py,px+size,py+size);if(cell.w[2])ln(px,py+size,px+size,py+size);if(cell.w[3])ln(px,py,px,py+size)}
-let gx=goal.i*size+size/2,gy=goal.j*size+size/2;x.beginPath();x.fillStyle='#facc15';x.arc(gx,gy,size*.24,0,Math.PI*2);x.fill();x.shadowBlur=18;x.shadowColor='#fde047';x.fill();x.shadowBlur=0;
-let px=player.i*size+size/2,py=player.j*size+size/2;x.beginPath();x.fillStyle='#22c55e';x.arc(px,py,size*.26,0,Math.PI*2);x.fill();x.beginPath();x.strokeStyle='rgba(34,197,94,.4)';x.lineWidth=8;x.arc(px,py,size*.34,0,Math.PI*2);x.stroke();}
-function ln(a,b,d,e){x.beginPath();x.moveTo(a,b);x.lineTo(d,e);x.stroke()}
-function move(dir){let cur=grid[id(player.i,player.j)];if(cur.w[dir]){show('🚧 Wall blocked your path!');score=Math.max(0,score-1);hud();return}trail.push({i:player.i,j:player.j});if(trail.length>25)trail.shift();if(dir===0)player.j--;if(dir===1)player.i++;if(dir===2)player.j++;if(dir===3)player.i--;score+=5;const praise=['🔥 Great!','⚡ Swift move!','🌟 Amazing!','💎 Brilliant!'];if(Math.random()<.35)show(praise[Math.floor(Math.random()*praise.length)]);if(player.i===goal.i&&player.j===goal.j){score+=100;clearInterval(timer);show('🎉 Victory! Portal reached! Next Level Unlocked!');level++;hud();draw();setTimeout(start,1200);return}hud();draw();}
+const c=document.getElementById('game'),ctx=c.getContext('2d');const scoreEl=document.getElementById('score'),levelEl=document.getElementById('level'),timeEl=document.getElementById('time'),msg=document.getElementById('msg'),fill=document.getElementById('fill');
+let cols=12,rows=12,size,grid=[],stack=[],player,goal,level=1,score=0,time=60,timer,path=[];
+function Cell(i,j){this.i=i;this.j=j;this.w=[1,1,1,1];this.v=false}const id=(i,j)=>i+j*cols;
+function makeMaze(){grid=[];stack=[];for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)grid.push(new Cell(i,j));let cur=grid[0];cur.v=true;while(true){let n=[];[[cur.i,cur.j-1,0],[cur.i+1,cur.j,1],[cur.i,cur.j+1,2],[cur.i-1,cur.j,3]].forEach(a=>{let ni=a[0],nj=a[1];if(ni>=0&&nj>=0&&ni<cols&&nj<rows&&!grid[id(ni,nj)].v)n.push([grid[id(ni,nj)],a[2]])});if(n.length){let p=n[Math.floor(Math.random()*n.length)],nx=p[0],d=p[1];stack.push(cur);cur.w[d]=0;nx.w[(d+2)%4]=0;nx.v=true;cur=nx}else if(stack.length)cur=stack.pop();else break;}}
+function shortest(){let q=[[0,0]],seen={[id(0,0)]:1},prev={};while(q.length){let [i,j]=q.shift();if(i===goal.i&&j===goal.j)break;let cell=grid[id(i,j)],dirs=[[0,-1,0],[1,0,1],[0,1,2],[-1,0,3]];for(let d of dirs){let ni=i+d[0],nj=j+d[1],dir=d[2];if(!cell.w[dir]&&ni>=0&&nj>=0&&ni<cols&&nj<rows&&!seen[id(ni,nj)]){seen[id(ni,nj)]=1;prev[id(ni,nj)]=[i,j];q.push([ni,nj]);}}}let cur=[goal.i,goal.j],r=[];while(cur){r.push(cur);cur=prev[id(cur[0],cur[1])]}path=r.reverse();}
+function start(){cols=rows=Math.min(11+level,22);makeMaze();player={i:0,j:0};goal={i:cols-1,j:rows-1};time=60;shortest();clearInterval(timer);timer=setInterval(()=>{time--;hud();if(time<=0){show('⏰ Time Up! Restarting...');setTimeout(start,900)}},1000);show('🚀 Neon Quest Begins!');hud();draw();}
+function hud(){scoreEl.textContent=score;levelEl.textContent=level;timeEl.textContent=time;fill.style.width=(time/60*100)+'%'}function show(t){msg.textContent=t}
+function deco(x,y){ctx.font=(size*.35)+'px serif';ctx.fillText('🌸',x+size*.12,y+size*.45);ctx.fillText('💻',x+size*.52,y+size*.75)}
+function draw(){size=c.width/cols;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)if((i+j)%5===0)deco(i*size,j*size);for(let cell of grid){let x=cell.i*size,y=cell.j*size;ctx.strokeStyle=['#67e8f9','#f472b6','#a78bfa','#22c55e'][(cell.i+cell.j)%4];ctx.shadowBlur=10;ctx.shadowColor=ctx.strokeStyle;ctx.lineWidth=Math.max(2,size*.05);if(cell.w[0])ln(x,y,x+size,y);if(cell.w[1])ln(x+size,y,x+size,y+size);if(cell.w[2])ln(x,y+size,x+size,y+size);if(cell.w[3])ln(x,y,x,y+size);}ctx.shadowBlur=0;let gx=goal.i*size+size/2,gy=goal.j*size+size/2;ctx.font=(size*.5)+'px serif';ctx.fillText('🌀',gx-size*.18,gy+size*.18);let px=player.i*size+size/2,py=player.j*size+size/2;ctx.font=(size*.5)+'px serif';ctx.fillText('🤖',px-size*.18,py+size*.18)}
+function ln(a,b,d,e){ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(d,e);ctx.stroke()}
+function onPath(i,j){return path.some(p=>p[0]===i&&p[1]===j)}
+function move(dir){let cur=grid[id(player.i,player.j)];if(cur.w[dir]){show('🚧 Choose another route!');return}if(dir===0)player.j--;if(dir===1)player.i++;if(dir===2)player.j++;if(dir===3)player.i--;if(onPath(player.i,player.j)){score+=8;show('✅ Great direction!')}else{score=Math.max(0,score-5);show('❌ Wrong direction!')}if(player.i===goal.i&&player.j===goal.j){score+=150;clearInterval(timer);show('🎉 Unbelievable Victory! New Level!');level++;hud();draw();setTimeout(start,1300);return}hud();draw();}
+function hint(){let n=path.find(p=>Math.abs(p[0]-player.i)+Math.abs(p[1]-player.j)===1);if(n){show('✨ Hint activated!');score=Math.max(0,score-10);hud();ctx.fillStyle='rgba(250,204,21,.35)';ctx.fillRect(n[0]*size+size*.2,n[1]*size+size*.2,size*.6,size*.6);}}
 function restartGame(){level=1;score=0;start()}
-addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='arrowup'||k==='w')move(0);if(k==='arrowright'||k==='d')move(1);if(k==='arrowdown'||k==='s')move(2);if(k==='arrowleft'||k==='a')move(3)});
-let sx=0,sy=0;function handleSwipe(nx,ny){let dx=nx-sx,dy=ny-sy;if(Math.hypot(dx,dy)<24)return;if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:3);else move(dy>0?2:0);sx=nx;sy=ny;}
-c.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});c.addEventListener('touchmove',e=>{e.preventDefault();handleSwipe(e.touches[0].clientX,e.touches[0].clientY)},{passive:false});
-start();
-</script>
-</body>
-</html>
+addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='arrowup'||k==='w')move(0);if(k==='arrowright'||k==='d')move(1);if(k==='arrowdown'||k==='s')move(2);if(k==='arrowleft'||k==='a')move(3)});let sx=0,sy=0;c.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});c.addEventListener('touchmove',e=>{e.preventDefault();let nx=e.touches[0].clientX,ny=e.touches[0].clientY,dx=nx-sx,dy=ny-sy;if(Math.hypot(dx,dy)>22){if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:3);else move(dy>0?2:0);sx=nx;sy=ny;}},{passive:false});start();
+</script></body></html>
