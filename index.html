@@ -1,37 +1,873 @@
-<!DOCTYPE html><html lang='en'>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>👑 Shreyas Infinite Neon Maze Legends</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>👑 Shreyas Infinite Maze Legends</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:'Poppins',Arial,sans-serif;background:#000;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px}#app{width:min(96vw,1040px)}h1{text-align:center;font-size:clamp(2rem,4vw,3.3rem);margin:8px 0 14px}.glow{color:#67e8f9;text-shadow:0 0 18px #67e8f9}.topicon{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;margin-right:10px;border:2px solid #67e8f9;box-shadow:0 0 14px #67e8f9}.hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.card{background:rgba(255,255,255,.06);padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.08)}button{width:100%;padding:12px;border:none;border-radius:14px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(135deg,#06b6d4,#2563eb)}canvas{display:block;margin:auto;width:min(92vw,780px);height:min(92vw,780px);max-width:780px;max-height:780px;background:#000;border-radius:0px;border:3px solid #67e8f9;box-shadow:0 0 40px rgba(34,211,238,.35);touch-action:none}#msg{text-align:center;margin-top:12px;min-height:30px;font-weight:800;color:#fde047}.tip{text-align:center;color:#cbd5e1;font-size:.92rem;margin-top:6px}
-</style></head><body><div id='app'>
-<h1>👑 <img class='topicon' src='https://i.ibb.co/9HzZgN7z/IMG-20260502-215029.jpg' src='https://i.ibb.co/9HzZgN7z/IMG-20260502-215029.jpg'>⚔️ <span class='glow'>Shreyas Neon Maze Legends</span></h1>
-<div class='hud'>
-<div class='card'>⭐ Score: <span id='score'>0</span></div>
-<div class='card'>🏆 Level: <span id='level'>1</span></div>
-<div class='card'>⏱️ Time: <span id='time'>120</span>s</div>
-<div class='card'><button onclick='restartGame()'>Restart</button></div>
-<div class='card'><button onclick='hint()'>Hint ✨</button></div>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#000;
+overflow:hidden;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:10px;
+}
+
+#app{
+width:min(96vw,1100px);
+}
+
+h1{
+text-align:center;
+font-size:clamp(1.8rem,4vw,3.2rem);
+margin-bottom:14px;
+font-weight:800;
+}
+
+.glow{
+color:#67e8f9;
+text-shadow:
+0 0 10px #67e8f9,
+0 0 25px #67e8f9,
+0 0 45px #67e8f9;
+}
+
+.topicon{
+width:65px;
+height:65px;
+border-radius:50%;
+object-fit:cover;
+vertical-align:middle;
+margin-right:10px;
+border:2px solid #67e8f9;
+box-shadow:0 0 20px #67e8f9;
+}
+
+.hud{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:12px;
+margin-bottom:14px;
+}
+
+.card{
+background:rgba(255,255,255,.06);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.12);
+padding:14px;
+border-radius:18px;
+font-weight:700;
+text-align:center;
+box-shadow:0 0 20px rgba(255,255,255,.05);
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:14px;
+font-weight:800;
+cursor:pointer;
+color:white;
+font-size:1rem;
+background:linear-gradient(135deg,#06b6d4,#2563eb);
+transition:.25s;
+}
+
+button:hover{
+transform:scale(1.04);
+}
+
+canvas{
+display:block;
+margin:auto;
+width:min(92vw,780px);
+height:min(92vw,780px);
+max-width:780px;
+max-height:780px;
+aspect-ratio:1/1;
+background:black;
+border:3px solid #67e8f9;
+box-shadow:
+0 0 30px rgba(103,232,249,.35),
+0 0 60px rgba(103,232,249,.18);
+touch-action:none;
+border-radius:20px;
+}
+
+#msg{
+text-align:center;
+margin-top:14px;
+font-size:1.1rem;
+font-weight:800;
+min-height:30px;
+color:#fde047;
+}
+
+.tip{
+text-align:center;
+margin-top:8px;
+font-size:.92rem;
+color:#cbd5e1;
+}
+
+.pauseScreen{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999;
+font-size:3rem;
+font-weight:800;
+backdrop-filter:blur(10px);
+}
+
+@media(max-width:700px){
+.card{
+font-size:.9rem;
+padding:10px;
+}
+
+button{
+font-size:.9rem;
+padding:10px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<h1>
+👑
+<img class="topicon" src="https://i.ibb.co/9HzZgN7z/IMG-20260502-215029.jpg">
+⚔️
+<span class="glow">Shreyas Neon Maze Legends</span>
+</h1>
+
+<div class="hud">
+
+<div class="card">
+⭐ Score
+<br>
+<span id="score">0</span>
 </div>
-<canvas id='game' width='780' height='780'></canvas>
-<div id='msg'>Reach the portal through the neon maze!</div>
-<div class='tip'>Arrow Keys / WASD • Swipe on mobile • Backtracking loses score</div>
+
+<div class="card">
+🏆 Level
+<br>
+<span id="level">1</span>
 </div>
+
+<div class="card">
+⏱️ Time
+<br>
+<span id="time">120</span>s
+</div>
+
+<div class="card">
+👑 Best
+<br>
+<span id="best">0</span>
+</div>
+
+<div class="card">
+<button onclick="restartGame()">Restart</button>
+</div>
+
+<div class="card">
+<button onclick="hint()">Hint ✨</button>
+</div>
+
+<div class="card">
+<button onclick="togglePause()">Pause ⏸️</button>
+</div>
+
+</div>
+
+<canvas id="game" width="780" height="780"></canvas>
+
+<div id="msg">
+Reach the portal through the neon maze!
+</div>
+
+<div class="tip">
+Arrow Keys / WASD • Swipe on Mobile • Wrong turns lose score
+</div>
+
+</div>
+
+<div class="pauseScreen" id="pauseScreen">
+⏸️ PAUSED
+</div>
+
 <script>
-const c=document.getElementById('game'),ctx=c.getContext('2d');const scoreEl=document.getElementById('score'),levelEl=document.getElementById('level'),timeEl=document.getElementById('time'),msg=document.getElementById('msg');
-let cols=12,rows=12,size,grid=[],stack=[],player,goal,level=1,score=0,time=60,timer,path=[];
-function Cell(i,j){this.i=i;this.j=j;this.w=[1,1,1,1];this.v=false}const id=(i,j)=>i+j*cols;
-function makeMaze(){grid=[];stack=[];for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)grid.push(new Cell(i,j));let cur=grid[0];cur.v=true;while(true){let n=[];[[cur.i,cur.j-1,0],[cur.i+1,cur.j,1],[cur.i,cur.j+1,2],[cur.i-1,cur.j,3]].forEach(a=>{let ni=a[0],nj=a[1];if(ni>=0&&nj>=0&&ni<cols&&nj<rows&&!grid[id(ni,nj)].v)n.push([grid[id(ni,nj)],a[2]])});if(n.length){let p=n[Math.floor(Math.random()*n.length)],nx=p[0],d=p[1];stack.push(cur);cur.w[d]=0;nx.w[(d+2)%4]=0;nx.v=true;cur=nx}else if(stack.length)cur=stack.pop();else break;}}
-function solve(){let q=[[0,0]],seen={[id(0,0)]:1},prev={};while(q.length){let [i,j]=q.shift();if(i===goal.i&&j===goal.j)break;let cell=grid[id(i,j)],dirs=[[0,-1,0],[1,0,1],[0,1,2],[-1,0,3]];for(let d of dirs){let ni=i+d[0],nj=j+d[1],dr=d[2];if(!cell.w[dr]&&ni>=0&&nj>=0&&ni<cols&&nj<rows&&!seen[id(ni,nj)]){seen[id(ni,nj)]=1;prev[id(ni,nj)]=[i,j];q.push([ni,nj]);}}}let cur=[goal.i,goal.j],r=[];while(cur){r.push(cur);cur=prev[id(cur[0],cur[1])]}path=r.reverse();}
-function pathIndex(i,j){return path.findIndex(p=>p[0]===i&&p[1]===j)}
-function start(){cols=rows=(level===1?13:Math.min(18+level*2,28));makeMaze();player={i:0,j:0};goal={i:cols-1,j:rows-1};time=120;solve();clearInterval(timer);timer=setInterval(()=>{time--;hud();if(time<=0){clearInterval(timer);show('⏰ Time Up! Restarting from Level 1...');level=1;score=0;setTimeout(start,1200)}},1000);show('🚀 Level '+level+' Challenge Started!');hud();draw();}
-function hud(){scoreEl.textContent=score;levelEl.textContent=level;timeEl.textContent=time}function show(t){msg.textContent=t}
-function draw(){size=c.width/cols;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);let bg=ctx.createRadialGradient(c.width/2,c.height/2,40,c.width/2,c.height/2,c.width/1.2);bg.addColorStop(0,'rgba(103,232,249,.08)');bg.addColorStop(.5,'rgba(168,85,247,.06)');bg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);for(let s=0;s<24;s++){let px=(s*97)%c.width,py=(s*53)%c.height;ctx.fillStyle='rgba(255,255,255,.18)';ctx.beginPath();ctx.arc(px,py,1.6,0,Math.PI*2);ctx.fill();}for(let cell of grid){let x=cell.i*size,y=cell.j*size;ctx.strokeStyle=['#67e8f9','#f472b6','#a78bfa','#22c55e','#f59e0b'][(cell.i+cell.j)%5];ctx.shadowBlur=16;ctx.shadowColor=ctx.strokeStyle;ctx.lineWidth=Math.max(2,size*.05);if(cell.w[0])ln(x,y,x+size,y);if(cell.w[1])ln(x+size,y,x+size,y+size);if(cell.w[2])ln(x,y+size,x+size,y+size);if(cell.w[3])ln(x,y,x,y+size)}ctx.shadowBlur=0;ctx.font=(size*.5)+'px serif';ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.lineJoin='miter';ctx.strokeRect(2,2,c.width-4,c.height-4);ctx.save();ctx.shadowBlur=24;ctx.shadowColor='#fde047';ctx.font=(size*.62)+'px serif';ctx.fillStyle='#fff176';ctx.fillText('🏁',goal.i*size+size*.14,goal.j*size+size*.76);ctx.restore();let px=player.i*size+size/2,py=player.j*size+size/2;ctx.beginPath();ctx.fillStyle='#06b6d4';ctx.shadowBlur=22;ctx.shadowColor='#06b6d4';ctx.arc(px,py,size*.25,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.beginPath();ctx.strokeStyle='#ffffff';ctx.lineWidth=2.5;ctx.arc(px,py,size*.32,0,Math.PI*2);ctx.stroke();ctx.font=(size*.24)+'px serif';ctx.fillStyle='#fff';ctx.fillText('🛡️',px-size*.10,py+size*.08);ctx.font=(size*.18)+'px serif';ctx.fillText('👑',px-size*.07,py-size*.12)}
-function ln(a,b,d,e){ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(d,e);ctx.stroke()}
-function move(dir){let cur=grid[id(player.i,player.j)];if(cur.w[dir]){show('🚧 Choose another route!');return}let oldI=pathIndex(player.i,player.j),oi=player.i,oj=player.j;if(dir===0)player.j--;if(dir===1)player.i++;if(dir===2)player.j++;if(dir===3)player.i--;let newI=pathIndex(player.i,player.j);if(newI===-1){score=Math.max(0,score-6);show('❌ Wrong turn!')}else if(newI>oldI){score+=8;show('✅ Correct direction!')}else if(newI<oldI){score=Math.max(0,score-5);show('↩️ Backtracking!')}else{player.i=oi;player.j=oj;show('⚠️ No gain here!')}if(player.i===goal.i&&player.j===goal.j){score+=150;clearInterval(timer);show('🎉 Legendary Victory! Next Level Unlocked!');level++;hud();draw();setTimeout(start,1300);return}hud();draw();}
-function hint(){score=Math.max(0,score-10);let cur=pathIndex(player.i,player.j);if(cur>=0&&cur<path.length-1){let n=path[cur+1];ctx.fillStyle='rgba(250,204,21,.40)';ctx.fillRect(n[0]*size+size*.18,n[1]*size+size*.18,size*.64,size*.64);let dx=n[0]-player.i,dy=n[1]-player.j;let dir='Go Right ➡️';if(dx<0)dir='Go Left ⬅️';else if(dy<0)dir='Go Up ⬆️';else if(dy>0)dir='Go Down ⬇️';show('✨ Correct Hint: '+dir);}else{show('✨ Hint: Follow the open route!');}hud();}
-function restartGame(){level=1;score=0;start()}
-addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(k==='arrowup'||k==='w')move(0);if(k==='arrowright'||k==='d')move(1);if(k==='arrowdown'||k==='s')move(2);if(k==='arrowleft'||k==='a')move(3)});let sx=0,sy=0;c.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});c.addEventListener('touchmove',e=>{e.preventDefault();let nx=e.touches[0].clientX,ny=e.touches[0].clientY,dx=nx-sx,dy=ny-sy;if(Math.hypot(dx,dy)>22){if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:3);else move(dy>0?2:0);sx=nx;sy=ny;}},{passive:false});start();
-</script></body></html>
+
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+
+const scoreEl=document.getElementById('score');
+const levelEl=document.getElementById('level');
+const timeEl=document.getElementById('time');
+const bestEl=document.getElementById('best');
+const msg=document.getElementById('msg');
+const pauseScreen=document.getElementById('pauseScreen');
+
+let cols=13;
+let rows=13;
+let size;
+
+let grid=[];
+let stack=[];
+
+let player;
+let goal;
+
+let level=1;
+let score=0;
+let time=120;
+
+let timer;
+let path=[];
+
+let paused=false;
+
+let best=localStorage.getItem('mazeBest') || 0;
+bestEl.textContent=best;
+
+let coins=[];
+
+const renderPlayer={
+x:0,
+y:0
+};
+
+function Cell(i,j){
+this.i=i;
+this.j=j;
+this.w=[1,1,1,1];
+this.v=false;
+}
+
+const id=(i,j)=>i+j*cols;
+
+function makeMaze(){
+
+grid=[];
+stack=[];
+
+for(let j=0;j<rows;j++){
+for(let i=0;i<cols;i++){
+grid.push(new Cell(i,j));
+}
+}
+
+let cur=grid[0];
+cur.v=true;
+
+while(true){
+
+let n=[];
+
+[
+[cur.i,cur.j-1,0],
+[cur.i+1,cur.j,1],
+[cur.i,cur.j+1,2],
+[cur.i-1,cur.j,3]
+
+].forEach(a=>{
+
+let ni=a[0];
+let nj=a[1];
+
+if(
+ni>=0 &&
+nj>=0 &&
+ni<cols &&
+nj<rows &&
+!grid[id(ni,nj)].v
+){
+n.push([grid[id(ni,nj)],a[2]]);
+}
+
+});
+
+if(n.length){
+
+let p=n[Math.floor(Math.random()*n.length)];
+
+let nx=p[0];
+let d=p[1];
+
+stack.push(cur);
+
+cur.w[d]=0;
+nx.w[(d+2)%4]=0;
+
+nx.v=true;
+
+cur=nx;
+
+}else if(stack.length){
+
+cur=stack.pop();
+
+}else{
+break;
+}
+
+}
+
+}
+
+function solve(){
+
+let q=[[0,0]];
+let seen={[id(0,0)]:1};
+let prev={};
+
+while(q.length){
+
+let [i,j]=q.shift();
+
+if(i===goal.i && j===goal.j) break;
+
+let cell=grid[id(i,j)];
+
+let dirs=[
+[0,-1,0],
+[1,0,1],
+[0,1,2],
+[-1,0,3]
+];
+
+for(let d of dirs){
+
+let ni=i+d[0];
+let nj=j+d[1];
+let dr=d[2];
+
+if(
+!cell.w[dr] &&
+ni>=0 &&
+nj>=0 &&
+ni<cols &&
+nj<rows &&
+!seen[id(ni,nj)]
+){
+
+seen[id(ni,nj)]=1;
+prev[id(ni,nj)]=[i,j];
+q.push([ni,nj]);
+
+}
+
+}
+
+}
+
+let cur=[goal.i,goal.j];
+let r=[];
+
+while(cur){
+r.push(cur);
+cur=prev[id(cur[0],cur[1])];
+}
+
+path=r.reverse();
+
+}
+
+function pathIndex(i,j){
+return path.findIndex(p=>p[0]===i && p[1]===j);
+}
+
+function spawnCoins(){
+
+coins=[];
+
+for(let i=0;i<12;i++){
+
+coins.push({
+i:Math.floor(Math.random()*cols),
+j:Math.floor(Math.random()*rows),
+taken:false
+});
+
+}
+
+}
+
+function start(){
+
+cols=rows=Math.min(13+level*2,28);
+
+makeMaze();
+
+player={i:0,j:0};
+
+goal={
+i:cols-1,
+j:rows-1
+};
+
+renderPlayer.x=0;
+renderPlayer.y=0;
+
+time=120;
+
+solve();
+
+spawnCoins();
+
+clearInterval(timer);
+
+timer=setInterval(()=>{
+
+if(paused) return;
+
+time--;
+
+hud();
+
+if(time<=0){
+
+clearInterval(timer);
+
+show('⏰ Time Up! Restarting...');
+
+level=1;
+score=0;
+
+setTimeout(start,1200);
+
+}
+
+},1000);
+
+show('🚀 Level '+level+' Started!');
+
+hud();
+
+}
+
+function hud(){
+
+scoreEl.textContent=score;
+levelEl.textContent=level;
+timeEl.textContent=time;
+bestEl.textContent=best;
+
+}
+
+function show(t){
+msg.textContent=t;
+}
+
+function draw(){
+
+requestAnimationFrame(draw);
+
+size=canvas.width/cols;
+
+let grad=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+
+grad.addColorStop(0,`hsl(${Date.now()/40%360},100%,8%)`);
+grad.addColorStop(1,'#000');
+
+ctx.fillStyle=grad;
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+for(let s=0;s<40;s++){
+
+let px=(s*97+Date.now()*.02)%canvas.width;
+let py=(s*53)%canvas.height;
+
+ctx.fillStyle='rgba(255,255,255,.18)';
+
+ctx.beginPath();
+ctx.arc(px,py,1.4,0,Math.PI*2);
+ctx.fill();
+
+}
+
+const colors=[
+'#00f5ff',
+'#ff00ff',
+'#00ff88',
+'#ffe600',
+'#ff6b6b'
+];
+
+for(let cell of grid){
+
+let x=cell.i*size;
+let y=cell.j*size;
+
+ctx.strokeStyle=colors[(cell.i+cell.j)%colors.length];
+
+ctx.shadowBlur=18;
+ctx.shadowColor=ctx.strokeStyle;
+
+ctx.lineWidth=Math.max(2,size*.05);
+
+if(cell.w[0]) line(x,y,x+size,y);
+if(cell.w[1]) line(x+size,y,x+size,y+size);
+if(cell.w[2]) line(x,y+size,x+size,y+size);
+if(cell.w[3]) line(x,y,x,y+size);
+
+}
+
+ctx.shadowBlur=0;
+
+for(let coin of coins){
+
+if(coin.taken) continue;
+
+ctx.save();
+
+ctx.shadowBlur=20;
+ctx.shadowColor='#facc15';
+
+ctx.font=(size*.35)+'px serif';
+
+ctx.fillText(
+'🪙',
+coin.i*size+size*.25,
+coin.j*size+size*.7
+);
+
+ctx.restore();
+
+if(player.i===coin.i && player.j===coin.j){
+
+coin.taken=true;
+
+score+=25;
+
+show('🪙 Coin Collected!');
+
+hud();
+
+}
+
+}
+
+let pulse=Math.sin(Date.now()/180)*6;
+
+ctx.save();
+
+ctx.shadowBlur=35;
+ctx.shadowColor='#fde047';
+
+ctx.beginPath();
+
+ctx.arc(
+goal.i*size+size/2,
+goal.j*size+size/2,
+size*.24+pulse*.03,
+0,
+Math.PI*2
+);
+
+ctx.fillStyle='#fde047';
+ctx.fill();
+
+ctx.font=(size*.55)+'px serif';
+
+ctx.fillText(
+'🌀',
+goal.i*size+size*.18,
+goal.j*size+size*.72
+);
+
+ctx.restore();
+
+renderPlayer.x+=((player.i*size+size/2)-renderPlayer.x)*0.22;
+renderPlayer.y+=((player.j*size+size/2)-renderPlayer.y)*0.22;
+
+ctx.beginPath();
+
+ctx.fillStyle='#06b6d4';
+
+ctx.shadowBlur=24;
+ctx.shadowColor='#06b6d4';
+
+ctx.arc(
+renderPlayer.x,
+renderPlayer.y,
+size*.25,
+0,
+Math.PI*2
+);
+
+ctx.fill();
+
+ctx.shadowBlur=0;
+
+ctx.beginPath();
+
+ctx.strokeStyle='#fff';
+
+ctx.lineWidth=2;
+
+ctx.arc(
+renderPlayer.x,
+renderPlayer.y,
+size*.32,
+0,
+Math.PI*2
+);
+
+ctx.stroke();
+
+ctx.font=(size*.24)+'px serif';
+
+ctx.fillStyle='#fff';
+
+ctx.fillText(
+'🛡️',
+renderPlayer.x-size*.10,
+renderPlayer.y+size*.08
+);
+
+ctx.fillText(
+'👑',
+renderPlayer.x-size*.08,
+renderPlayer.y-size*.12
+);
+
+}
+
+function line(a,b,d,e){
+
+ctx.beginPath();
+
+ctx.moveTo(a,b);
+
+ctx.lineTo(d,e);
+
+ctx.stroke();
+
+}
+
+function move(dir){
+
+if(paused) return;
+
+let cur=grid[id(player.i,player.j)];
+
+if(cur.w[dir]){
+
+show('🚧 Blocked Path!');
+
+shake();
+
+return;
+
+}
+
+let oldI=pathIndex(player.i,player.j);
+
+if(dir===0) player.j--;
+if(dir===1) player.i++;
+if(dir===2) player.j++;
+if(dir===3) player.i--;
+
+let newI=pathIndex(player.i,player.j);
+
+if(newI===-1){
+
+score=Math.max(0,score-6);
+
+show('❌ Wrong Turn!');
+
+shake();
+
+}else if(newI>oldI){
+
+score+=8;
+
+show('✅ Correct Route!');
+
+}else if(newI<oldI){
+
+score=Math.max(0,score-5);
+
+show('↩️ Backtracking!');
+
+}
+
+if(player.i===goal.i && player.j===goal.j){
+
+score+=150;
+
+if(score>best){
+
+best=score;
+
+localStorage.setItem('mazeBest',best);
+
+}
+
+clearInterval(timer);
+
+show('🎉 Legendary Victory!');
+
+level++;
+
+hud();
+
+setTimeout(start,1500);
+
+}
+
+hud();
+
+}
+
+function shake(){
+
+canvas.style.transform=
+`translate(${Math.random()*10-5}px,${Math.random()*10-5}px)`;
+
+setTimeout(()=>{
+canvas.style.transform='translate(0,0)';
+},80);
+
+}
+
+function hint(){
+
+score=Math.max(0,score-10);
+
+let cur=pathIndex(player.i,player.j);
+
+if(cur>=0 && cur<path.length-1){
+
+let n=path[cur+1];
+
+ctx.fillStyle='rgba(250,204,21,.45)';
+
+ctx.fillRect(
+n[0]*size+size*.18,
+n[1]*size+size*.18,
+size*.64,
+size*.64
+);
+
+let dx=n[0]-player.i;
+let dy=n[1]-player.j;
+
+let dir='➡️ Right';
+
+if(dx<0) dir='⬅️ Left';
+else if(dy<0) dir='⬆️ Up';
+else if(dy>0) dir='⬇️ Down';
+
+show('✨ Hint: Go '+dir);
+
+}
+
+hud();
+
+}
+
+function restartGame(){
+
+level=1;
+score=0;
+
+start();
+
+}
+
+function togglePause(){
+
+paused=!paused;
+
+pauseScreen.style.display=
+paused ? 'flex' : 'none';
+
+show(paused ? '⏸️ Game Paused' : '▶️ Continue!');
+
+}
+
+addEventListener('keydown',e=>{
+
+let k=e.key.toLowerCase();
+
+if(k==='arrowup'||k==='w') move(0);
+if(k==='arrowright'||k==='d') move(1);
+if(k==='arrowdown'||k==='s') move(2);
+if(k==='arrowleft'||k==='a') move(3);
+
+if(k==='p') togglePause();
+
+});
+
+let sx=0;
+let sy=0;
+
+canvas.addEventListener('touchstart',e=>{
+
+sx=e.touches[0].clientX;
+sy=e.touches[0].clientY;
+
+},{passive:true});
+
+canvas.addEventListener('touchmove',e=>{
+
+e.preventDefault();
+
+let nx=e.touches[0].clientX;
+let ny=e.touches[0].clientY;
+
+let dx=nx-sx;
+let dy=ny-sy;
+
+if(Math.hypot(dx,dy)>22){
+
+if(Math.abs(dx)>Math.abs(dy)){
+
+move(dx>0?1:3);
+
+}else{
+
+move(dy>0?2:0);
+
+}
+
+sx=nx;
+sy=ny;
+
+}
+
+},{passive:false});
+
+start();
+
+draw();
+
+</script>
+
+</body>
+</html>
