@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -18,17 +19,19 @@ box-sizing:border-box;
 body{
 font-family:'Poppins',sans-serif;
 background:#000;
-overflow:hidden;
+overflow-x:hidden;
+overflow-y:auto;
 color:white;
 display:flex;
 justify-content:center;
-align-items:center;
+align-items:flex-start;
 min-height:100vh;
 padding:10px;
 }
 
 #app{
 width:min(96vw,1100px);
+padding-bottom:30px;
 }
 
 h1{
@@ -95,10 +98,10 @@ transform:scale(1.04);
 canvas{
 display:block;
 margin:auto;
-width:min(92vw,780px);
-height:min(92vw,780px);
-max-width:780px;
-max-height:780px;
+width:min(88vw,680px);
+height:min(88vw,680px);
+max-width:680px;
+max-height:680px;
 aspect-ratio:1/1;
 background:black;
 border:3px solid #67e8f9;
@@ -139,6 +142,7 @@ backdrop-filter:blur(10px);
 }
 
 @media(max-width:700px){
+
 .card{
 font-size:.9rem;
 padding:10px;
@@ -148,7 +152,9 @@ button{
 font-size:.9rem;
 padding:10px;
 }
+
 }
+
 </style>
 </head>
 
@@ -249,6 +255,7 @@ let timer;
 let path=[];
 
 let paused=false;
+let moveLock=false;
 
 let best=localStorage.getItem('mazeBest') || 0;
 bestEl.textContent=best;
@@ -671,9 +678,26 @@ ctx.stroke();
 
 function move(dir){
 
-if(paused) return;
+if(paused || moveLock) return;
+
+moveLock=true;
+
+setTimeout(()=>{
+moveLock=false;
+},70);
+
+if(
+player.i < 0 ||
+player.j < 0 ||
+player.i >= cols ||
+player.j >= rows
+){
+return;
+}
 
 let cur=grid[id(player.i,player.j)];
+
+if(!cur) return;
 
 if(cur.w[dir]){
 
@@ -685,12 +709,27 @@ return;
 
 }
 
+let ni=player.i;
+let nj=player.j;
+
+if(dir===0) nj--;
+if(dir===1) ni++;
+if(dir===2) nj++;
+if(dir===3) ni--;
+
+if(
+ni<0 ||
+nj<0 ||
+ni>=cols ||
+nj>=rows
+){
+return;
+}
+
 let oldI=pathIndex(player.i,player.j);
 
-if(dir===0) player.j--;
-if(dir===1) player.i++;
-if(dir===2) player.j++;
-if(dir===3) player.i--;
+player.i=ni;
+player.j=nj;
 
 let newI=pathIndex(player.i,player.j);
 
@@ -838,13 +877,15 @@ canvas.addEventListener('touchmove',e=>{
 
 e.preventDefault();
 
+if(moveLock) return;
+
 let nx=e.touches[0].clientX;
 let ny=e.touches[0].clientY;
 
 let dx=nx-sx;
 let dy=ny-sy;
 
-if(Math.hypot(dx,dy)>22){
+if(Math.hypot(dx,dy)>35){
 
 if(Math.abs(dx)>Math.abs(dy)){
 
